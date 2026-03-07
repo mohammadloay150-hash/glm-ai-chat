@@ -29,7 +29,7 @@ if (strpos($uri, '/models') !== false) {
         "available_models" => $names, 
         "dev" => $dev_team, 
         "join" => $join_link
-    ]);
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     exit;
 }
 
@@ -62,7 +62,7 @@ if (strpos($uri, '/chat') !== false) {
             "message" => "Question (q) is required", 
             "dev" => $dev_team, 
             "join" => $join_link
-        ]);
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         exit;
     }
 
@@ -115,7 +115,7 @@ if (strpos($uri, '/chat') !== false) {
     curl_close($ch);
 
     if ($http_code == 200 || $http_code == 201) {
-        echo json_encode([
+        $response_data = [
             "status" => "success",
             "code" => 200,
             "model_used" => $current_model[0],
@@ -123,21 +123,23 @@ if (strpos($uri, '/chat') !== false) {
             "response" => trim($final_answer),
             "dev" => $dev_team,
             "join" => $join_link
-        ]);
+        ];
     } else {
-        echo json_encode([
+        $response_data = [
             "status" => "error", 
             "code" => $http_code, 
+            "message" => "API connection failed",
             "dev" => $dev_team, 
             "join" => $join_link
-        ]);
+        ];
     }
+    echo json_encode($response_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     exit;
 }
 
 echo json_encode([
     "message" => "Welcome to PBT AI API", 
+    "status" => "active",
     "dev" => $dev_team, 
-    "join" => $join_link,
-    "status" => "active"
-]);
+    "join" => $join_link
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
